@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comprehensive guide to End-to-End ML System Design for Airbnb Home Value Prediction - covering architecture, metrics, and implementation">
+    <title>Airbnb Home Value Prediction - ML System Design</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>ML System Design</span>
+            </div>
+            <div class="nav-links">
+                <a href="#introduction" class="nav-link">Introduction</a>
+                <a href="#metrics" class="nav-link">Metrics</a>
+                <a href="#architecture" class="nav-link">Architecture</a>
+                <a href="#implementation" class="nav-link">Implementation</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+        <div class="hero-content">
+            <div class="badge">
+                <span class="badge-dot"></span>
+                <span>Scaler Companion</span>
+                <span class="beta-tag">BETA</span>
+            </div>
+            <h1 class="hero-title">
+                End-to-End ML System Design
+                <span class="gradient-text">Airbnb Home Value Prediction</span>
+            </h1>
+            <p class="hero-subtitle">
+                A comprehensive guide to designing scalable machine learning systems for real-time property valuation, 
+                inspired by Airbnb's production architecture
+            </p>
+            <div class="hero-cta">
+                <a href="#introduction" class="btn btn-primary">
+                    <span>Explore System Design</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <a href="#architecture" class="btn btn-secondary">
+                    <span>View Architecture</span>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-value">< 100ms</div>
+                    <div class="stat-label">Latency</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Real-time</div>
+                    <div class="stat-label">Predictions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Scalable</div>
+                    <div class="stat-label">Architecture</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Introduction Section -->
+    <section id="introduction" class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Overview</span>
+                <h2 class="section-title">Introduction to the System</h2>
+                <p class="section-description">
+                    Understanding the core objectives and business context for building an ML-powered home valuation system
+                </p>
+            </div>
+            <div class="content-grid">
+                <div class="content-card glass-card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 16V8C21 6.89543 20.1046 6 19 6H5C3.89543 6 3 6.89543 3 8V16C3 17.1046 3.89543 18 5 18H19C20.1046 18 21 17.1046 21 16Z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3 10H21" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>Business Objective</h3>
+                    <p>Design an end-to-end ML system to predict home values on Airbnb, enabling hosts to optimize pricing and helping guests find fairly-priced accommodations.</p>
+                    <div class="highlight-box">
+                        <strong>Key Goal:</strong> Maximize Customer Lifetime Value (LTV) while minimizing Customer Acquisition Cost (CAC)
+                    </div>
+                </div>
+                <div class="content-card glass-card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 19V6L21 12L9 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M4 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3>Inspiration Source</h3>
+                    <p>This design takes inspiration from Airbnb's own tech blogs and production systems, incorporating industry best practices for ML system design.</p>
+                    <ul class="feature-list">
+                        <li>Production-grade architecture patterns</li>
+                        <li>Real-world scalability considerations</li>
+                        <li>Battle-tested ML pipelines</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Metrics Section -->
+    <section id="metrics" class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Business Intelligence</span>
+                <h2 class="section-title">Key Metrics & Ratios</h2>
+                <p class="section-description">
+                    Understanding the business metrics that drive system design decisions
+                </p>
+            </div>
+            <div class="metrics-container">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon ltv-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>Customer Lifetime Value (LTV)</h3>
+                    </div>
+                    <div class="metric-content">
+                        <p class="metric-definition">The total value a customer contributes to the business over their entire relationship.</p>
+                        <div class="metric-formula">
+                            <code>LTV = Average Purchase Value × Purchase Frequency × Customer Lifespan</code>
+                        </div>
+                        <div class="metric-insight">
+                            <strong>Why it matters:</strong> High LTV indicates strong customer retention and revenue potential, making the business more sustainable and attractive to investors.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon cac-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>Customer Acquisition Cost (CAC)</h3>
+                    </div>
+                    <div class="metric-content">
+                        <p class="metric-definition">The total cost of acquiring a new customer, including marketing and sales expenses.</p>
+                        <div class="metric-formula">
+                            <code>CAC = Total Marketing & Sales Costs / Number of New Customers</code>
+                        </div>
+                        <div class="metric-insight">
+                            <strong>Why it matters:</strong> Lower CAC means more efficient customer acquisition, leading to better profitability and faster growth.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card metric-card-highlight">
+                    <div class="metric-header">
+                        <div class="metric-icon ratio-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M6 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>CAC to LTV Ratio</h3>
+                    </div>
+                    <div class="metric-content">
+                        <p class="metric-definition">The golden ratio that determines business viability and investor attractiveness.</p>
+                        <div class="metric-formula">
+                            <code>Ideal Ratio: LTV / CAC ≥ 3:1</code>
+                        </div>
+                        <div class="ratio-visual">
+                            <div class="ratio-bar">
+                                <div class="ratio-segment good">
+                                    <span>LTV</span>
+                                </div>
+                                <div class="ratio-segment bad">
+                                    <span>CAC</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-insight">
+                            <strong>Success Criteria:</strong> For every $1 spent on acquiring a customer, the business should generate at least $3 in lifetime value. This ensures sustainable growth and profitability.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requirements Section -->
+    <section id="requirements" class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">System Specifications</span>
+                <h2 class="section-title">Functional & Non-Functional Requirements</h2>
+            </div>
+            <div class="requirements-grid">
+                <div class="requirements-column">
+                    <h3 class="requirements-heading">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 11L12 14L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Functional Requirements
+                    </h3>
+                    <div class="requirement-item">
+                        <div class="requirement-number">01</div>
+                        <div class="requirement-content">
+                            <h4>Accurate Home Value Prediction</h4>
+                            <p>Predict rental/home values using comprehensive data points including property features, location, amenities, and market conditions.</p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-number">02</div>
+                        <div class="requirement-content">
+                            <h4>Real-Time & Batch Predictions</h4>
+                            <p>Support real-time predictions for new listings and frequent batch predictions for existing properties to keep valuations current.</p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-number">03</div>
+                        <div class="requirement-content">
+                            <h4>Model Explainability</h4>
+                            <p>Provide clear explanations for predictions using SHAP (SHapley Additive exPlanations) to build stakeholder trust and enable actionable insights.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="requirements-column">
+                    <h3 class="requirements-heading">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Non-Functional Requirements
+                    </h3>
+                    <div class="requirement-item">
+                        <div class="requirement-number">01</div>
+                        <div class="requirement-content">
+                            <h4>Low Latency (< 100ms)</h4>
+                            <p>Real-time predictions must respond in under 100 milliseconds to ensure seamless user experience and system usability.</p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-number">02</div>
+                        <div class="requirement-content">
+                            <h4>Scalability & Reliability</h4>
+                            <p>System must scale gracefully with increasing users and listings while maintaining high uptime (99.9%+ availability).</p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-number">03</div>
+                        <div class="requirement-content">
+                            <h4>Maintainability & Privacy</h4>
+                            <p>Easy to update and maintain, with strict adherence to privacy laws (GDPR, CCPA) and data protection standards.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Section -->
+    <section id="data" class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Data Engineering</span>
+                <h2 class="section-title">Data Considerations</h2>
+                <p class="section-description">
+                    Essential datasets and attributes required for accurate predictions
+                </p>
+            </div>
+            <div class="data-grid">
+                <div class="data-card">
+                    <div class="data-icon">🏠</div>
+                    <h3>Property Listings</h3>
+                    <ul class="data-attributes">
+                        <li>Property type & size</li>
+                        <li>Number of bedrooms/bathrooms</li>
+                        <li>Amenities & features</li>
+                        <li>Photos & descriptions</li>
+                        <li>Location coordinates</li>
+                    </ul>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">👥</div>
+                    <h3>Customer Data</h3>
+                    <ul class="data-attributes">
+                        <li>Booking history</li>
+                        <li>Search patterns</li>
+                        <li>Reviews & ratings</li>
+                        <li>Price sensitivity</li>
+                        <li>Preferences & behavior</li>
+                    </ul>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">🏆</div>
+                    <h3>Host Data</h3>
+                    <ul class="data-attributes">
+                        <li>Host experience level</li>
+                        <li>Response time & rate</li>
+                        <li>Superhost status</li>
+                        <li>Cancellation history</li>
+                        <li>Overall ratings</li>
+                    </ul>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">📊</div>
+                    <h3>Market Data</h3>
+                    <ul class="data-attributes">
+                        <li>Seasonal trends</li>
+                        <li>Local events calendar</li>
+                        <li>Economic indicators</li>
+                        <li>Competitor pricing</li>
+                        <li>Demand patterns</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Technical Design</span>
+                <h2 class="section-title">System Architecture</h2>
+                <p class="section-description">
+                    End-to-end pipeline from data ingestion to real-time serving
+                </p>
+            </div>
+            <div class="architecture-diagram">
+                <div class="arch-layer">
+                    <h3 class="layer-title">Data Layer</h3>
+                    <div class="arch-components">
+                        <div class="arch-component">
+                            <div class="component-icon">💾</div>
+                            <h4>S3 Storage</h4>
+                            <p>Historical data & model artifacts</p>
+                        </div>
+                        <div class="arch-component">
+                            <div class="component-icon">⚡</div>
+                            <h4>Redis Cache</h4>
+                            <p>Real-time data & predictions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arch-arrow">↓</div>
+
+                <div class="arch-layer">
+                    <h3 class="layer-title">Processing Layer</h3>
+                    <div class="arch-components">
+                        <div class="arch-component">
+                            <div class="component-icon">🔄</div>
+                            <h4>Apache Airflow</h4>
+                            <p>Workflow orchestration & scheduling</p>
+                        </div>
+                        <div class="arch-component">
+                            <div class="component-icon">⚙️</div>
+                            <h4>Feature Engineering</h4>
+                            <p>Data transformation & serialization</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arch-arrow">↓</div>
+
+                <div class="arch-layer">
+                    <h3 class="layer-title">ML Layer</h3>
+                    <div class="arch-components">
+                        <div class="arch-component highlight-component">
+                            <div class="component-icon">🤖</div>
+                            <h4>XGBoost Model</h4>
+                            <p>Gradient boosting for predictions</p>
+                        </div>
+                        <div class="arch-component highlight-component">
+                            <div class="component-icon">🔍</div>
+                            <h4>SHAP Explainer</h4>
+                            <p>Model interpretability</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arch-arrow">↓</div>
+
+                <div class="arch-layer">
+                    <h3 class="layer-title">Serving Layer</h3>
+                    <div class="arch-components">
+                        <div class="arch-component">
+                            <div class="component-icon">🚀</div>
+                            <h4>FastAPI / Flask</h4>
+                            <p>Real-time prediction API</p>
+                        </div>
+                        <div class="arch-component">
+                            <div class="component-icon">📈</div>
+                            <h4>A/B Testing</h4>
+                            <p>Model performance monitoring</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Implementation Section -->
+    <section id="implementation" class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Best Practices</span>
+                <h2 class="section-title">Special Considerations</h2>
+            </div>
+            <div class="implementation-grid">
+                <div class="impl-card">
+                    <div class="impl-header">
+                        <div class="impl-icon">🌍</div>
+                        <h3>Market Influences</h3>
+                    </div>
+                    <p>Account for dynamic factors that significantly impact property values:</p>
+                    <ul class="impl-list">
+                        <li><strong>Seasonal Trends:</strong> Peak travel seasons, holidays, weather patterns</li>
+                        <li><strong>Local Events:</strong> Conferences, festivals, sporting events</li>
+                        <li><strong>Economic Conditions:</strong> Inflation, employment rates, tourism trends</li>
+                        <li><strong>Regulatory Changes:</strong> Local laws, tax policies, zoning regulations</li>
+                    </ul>
+                </div>
+
+                <div class="impl-card">
+                    <div class="impl-header">
+                        <div class="impl-icon">💡</div>
+                        <h3>Host Recommendations</h3>
+                    </div>
+                    <p>Provide actionable insights to help hosts maximize property value:</p>
+                    <ul class="impl-list">
+                        <li><strong>Amenity Suggestions:</strong> WiFi, parking, kitchen upgrades</li>
+                        <li><strong>Pricing Optimization:</strong> Dynamic pricing recommendations</li>
+                        <li><strong>Photo Quality:</strong> Professional photography tips</li>
+                        <li><strong>Description Enhancement:</strong> SEO-optimized listing content</li>
+                    </ul>
+                </div>
+
+                <div class="impl-card">
+                    <div class="impl-header">
+                        <div class="impl-icon">🧪</div>
+                        <h3>A/B Testing Framework</h3>
+                    </div>
+                    <p>Measure model impact on key business metrics:</p>
+                    <ul class="impl-list">
+                        <li><strong>Booking Conversions:</strong> Track conversion rate improvements</li>
+                        <li><strong>User Engagement:</strong> Time on site, search refinements</li>
+                        <li><strong>Revenue Impact:</strong> Average booking value, total GMV</li>
+                        <li><strong>Host Satisfaction:</strong> Adoption rates, feedback scores</li>
+                    </ul>
+                </div>
+
+                <div class="impl-card">
+                    <div class="impl-header">
+                        <div class="impl-icon">🔒</div>
+                        <h3>Privacy & Security</h3>
+                    </div>
+                    <p>Ensure compliance and data protection:</p>
+                    <ul class="impl-list">
+                        <li><strong>GDPR Compliance:</strong> Right to erasure, data portability</li>
+                        <li><strong>Data Anonymization:</strong> PII removal, differential privacy</li>
+                        <li><strong>Access Controls:</strong> Role-based permissions, audit logs</li>
+                        <li><strong>Encryption:</strong> At-rest and in-transit data protection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusion Section -->
+    <section id="conclusion" class="section">
+        <div class="container">
+            <div class="conclusion-content">
+                <div class="conclusion-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M22 4L12 14.01L9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2>Conclusion</h2>
+                <p class="conclusion-text">
+                    This comprehensive ML system design demonstrates how to leverage machine learning for predicting Airbnb property values 
+                    at scale. By combining <strong>metric-driven predictions</strong>, <strong>robust data engineering pipelines</strong>, 
+                    <strong>model explainability</strong>, and <strong>real-time API integration</strong>, we create a production-ready 
+                    system that delivers business value while maintaining technical excellence.
+                </p>
+                <div class="key-takeaways">
+                    <h3>Key Takeaways</h3>
+                    <div class="takeaway-grid">
+                        <div class="takeaway-item">
+                            <span class="takeaway-number">1</span>
+                            <p>Focus on business metrics (LTV/CAC) to drive technical decisions</p>
+                        </div>
+                        <div class="takeaway-item">
+                            <span class="takeaway-number">2</span>
+                            <p>Design for both real-time and batch prediction scenarios</p>
+                        </div>
+                        <div class="takeaway-item">
+                            <span class="takeaway-number">3</span>
+                            <p>Prioritize explainability to build stakeholder trust</p>
+                        </div>
+                        <div class="takeaway-item">
+                            <span class="takeaway-number">4</span>
+                            <p>Build scalable, maintainable systems with proper monitoring</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>ML System Design</span>
+                    </div>
+                    <p>Comprehensive revision notes for end-to-end machine learning systems</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="#introduction">Introduction</a>
+                        <a href="#metrics">Business Metrics</a>
+                        <a href="#architecture">Architecture</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Topics</h4>
+                        <a href="#requirements">Requirements</a>
+                        <a href="#data">Data Engineering</a>
+                        <a href="#implementation">Implementation</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Scaler Companion. Comprehensive ML System Design Notes.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

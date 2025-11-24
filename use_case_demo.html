@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive use case demonstration for Airbnb Home Value Prediction ML System">
+    <title>Airbnb ML System - Interactive Use Case Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #14b8a6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --text-light: #f1f5f9;
+            --text-gray: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 24px;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .demo-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-gray);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--bg-darker);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .prediction-result {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(20, 184, 166, 0.1));
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .prediction-result.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .price-display {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .price-label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .price-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--success), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0.5rem 0;
+        }
+
+        .confidence-bar {
+            background: var(--bg-darker);
+            border-radius: 50px;
+            height: 12px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--accent));
+            border-radius: 50px;
+            transition: width 1s ease;
+        }
+
+        .feature-importance {
+            margin-top: 2rem;
+        }
+
+        .feature-importance h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .feature-bar {
+            margin-bottom: 1rem;
+        }
+
+        .feature-name {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .feature-progress {
+            background: var(--bg-darker);
+            border-radius: 50px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .feature-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 50px;
+            transition: width 0.8s ease;
+        }
+
+        .recommendations {
+            background: var(--bg-darker);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .recommendations h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--warning);
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--glass-bg);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .recommendation-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .recommendation-text {
+            flex: 1;
+        }
+
+        .recommendation-impact {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .pipeline-viz {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-darker);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .pipeline-step:hover {
+            transform: translateX(10px);
+            border-left-color: var(--accent);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+        }
+
+        .data-flow {
+            margin-top: 3rem;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            overflow-x: auto;
+        }
+
+        .flow-node {
+            min-width: 150px;
+            padding: 1.5rem;
+            background: var(--bg-darker);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+        }
+
+        .flow-node::after {
+            content: '→';
+            position: absolute;
+            right: -2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .flow-node:last-child::after {
+            display: none;
+        }
+
+        .flow-node-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-node-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 1024px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Airbnb Home Value Prediction</h1>
+            <p>Interactive ML System Use Case Demonstration</p>
+        </div>
+
+        <div class="demo-grid">
+            <!-- Input Form -->
+            <div class="demo-section">
+                <h2><span class="section-icon">📝</span> Property Details</h2>
+                <form id="predictionForm">
+                    <div class="form-group">
+                        <label for="propertyType">Property Type</label>
+                        <select id="propertyType">
+                            <option value="entire_home">Entire Home/Apt</option>
+                            <option value="private_room">Private Room</option>
+                            <option value="shared_room">Shared Room</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bedrooms">Bedrooms</label>
+                            <input type="number" id="bedrooms" min="1" max="10" value="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="bathrooms">Bathrooms</label>
+                            <input type="number" id="bathrooms" min="1" max="10" value="1" step="0.5">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <select id="location">
+                            <option value="downtown">Downtown / City Center</option>
+                            <option value="beach">Near Beach</option>
+                            <option value="suburban">Suburban Area</option>
+                            <option value="rural">Rural Area</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amenities">Amenities (select multiple)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" class="amenity" value="wifi" checked> WiFi
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" class="amenity" value="parking"> Parking
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" class="amenity" value="pool"> Pool
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" class="amenity" value="kitchen" checked> Kitchen
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="responseRate">Host Response Rate (%)</label>
+                            <input type="number" id="responseRate" min="0" max="100" value="95">
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">Overall Rating</label>
+                            <input type="number" id="rating" min="1" max="5" value="4.5" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="distanceMetro">Distance to Metro (km)</label>
+                        <input type="number" id="distanceMetro" min="0" max="50" value="1.5" step="0.1">
+                    </div>
+
+                    <button type="submit" class="btn">🚀 Predict Home Value</button>
+                </form>
+
+                <div id="predictionResult" class="prediction-result">
+                    <div class="price-display">
+                        <div class="price-label">Predicted Nightly Rate</div>
+                        <div class="price-value" id="predictedPrice">$0</div>
+                        <div style="color: var(--text-gray); font-size: 0.875rem;">
+                            Confidence: <span id="confidence">0</span>%
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill"></div>
+                        </div>
+                    </div>
+
+                    <div class="feature-importance">
+                        <h3>🔍 Feature Importance (SHAP Values)</h3>
+                        <div class="feature-bar">
+                            <div class="feature-name">
+                                <span>Location Score</span>
+                                <span id="locationImp">0%</span>
+                            </div>
+                            <div class="feature-progress">
+                                <div class="feature-fill" id="locationFill"></div>
+                            </div>
+                        </div>
+                        <div class="feature-bar">
+                            <div class="feature-name">
+                                <span>Property Type & Size</span>
+                                <span id="sizeImp">0%</span>
+                            </div>
+                            <div class="feature-progress">
+                                <div class="feature-fill" id="sizeFill"></div>
+                            </div>
+                        </div>
+                        <div class="feature-bar">
+                            <div class="feature-name">
+                                <span>Amenities</span>
+                                <span id="amenitiesImp">0%</span>
+                            </div>
+                            <div class="feature-progress">
+                                <div class="feature-fill" id="amenitiesFill"></div>
+                            </div>
+                        </div>
+                        <div class="feature-bar">
+                            <div class="feature-name">
+                                <span>Host Quality</span>
+                                <span id="hostImp">0%</span>
+                            </div>
+                            <div class="feature-progress">
+                                <div class="feature-fill" id="hostFill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recommendations">
+                        <h3>💡 Recommendations to Increase Value</h3>
+                        <div id="recommendationsList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Architecture Visualization -->
+            <div class="demo-section">
+                <h2><span class="section-icon">⚙️</span> ML System Pipeline</h2>
+                <div class="pipeline-viz">
+                    <div class="pipeline-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Data Ingestion</h3>
+                            <p>Collect property listings, host data, booking history, and market data from multiple
+                                sources</p>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Feature Engineering</h3>
+                            <p>Transform raw data: encode categories, handle missing values, create location scores
+                                using haversine formula</p>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Model Training (XGBoost)</h3>
+                            <p>Train gradient boosting model with hyperparameter tuning, cross-validation, and feature
+                                selection</p>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>Model Explainability (SHAP)</h3>
+                            <p>Generate SHAP values to explain predictions and identify key value drivers</p>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h3>Real-time Serving (FastAPI)</h3>
+                            <p>Deploy model via REST API with <100ms latency for real-time predictions</p>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <h3>A/B Testing & Monitoring</h3>
+                            <p>Track booking conversions, measure model impact, and continuously improve</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">&lt; 100ms</div>
+                        <div class="metric-label">API Latency</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">10M+</div>
+                        <div class="metric-label">Listings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Flow Diagram -->
+        <div class="data-flow">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">📊 End-to-End Data Flow</h2>
+            <div class="flow-diagram">
+                <div class="flow-node">
+                    <div class="flow-node-icon">💾</div>
+                    <div class="flow-node-label">S3 Storage</div>
+                    <div style="font-size: 0.75rem; color: var(--text-gray); margin-top: 0.5rem;">Historical Data</div>
+                </div>
+                <div class="flow-node">
+                    <div class="flow-node-icon">⚡</div>
+                    <div class="flow-node-label">Kafka/Redis</div>
+                    <div style="font-size: 0.75rem; color: var(--text-gray); margin-top: 0.5rem;">Real-time Stream</div>
+                </div>
+                <div class="flow-node">
+                    <div class="flow-node-icon">🔄</div>
+                    <div class="flow-node-label">Airflow</div>
+                    <div style="font-size: 0.75rem; color: var(--text-gray); margin-top: 0.5rem;">Orchestration</div>
+                </div>
+                <div class="flow-node">
+                    <div class="flow-node-icon">🤖</div>
+                    <div class="flow-node-label">XGBoost</div>
+                    <div style="font-size: 0.75rem; color: var(--text-gray); margin-top: 0.5rem;">ML Model</div>
+                </div>
+                <div class="flow-node">
+                    <div class="flow-node-icon">🚀</div>
+                    <div class="flow-node-label">FastAPI</div>
+                    <div style="font-size: 0.75rem; color: var(--text-gray); margin-top: 0.5rem;">API Serving</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="use_case_demo.js"></script>
+</body>
+
+</html>
